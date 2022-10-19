@@ -13,6 +13,10 @@ type memoryDB struct {
 	lock sync.RWMutex
 }
 
+func NewMemoryDB() DB {
+	return &memoryDB{db: map[string]*todo.TODO{}}
+}
+
 func (m *memoryDB) GetAllTODOs(ctx context.Context) ([]*todo.TODO, error) {
 	m.lock.RLock()
 	defer m.lock.RUnlock()
