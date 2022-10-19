@@ -2,8 +2,9 @@ package db
 
 import (
 	"context"
-	"github.com/nnaakkaaii/tododemo/internal/todo"
 	"sync"
+
+	"github.com/nnaakkaaii/tododemo/internal/todo"
 )
 
 var _ DB = (*memoryDB)(nil)

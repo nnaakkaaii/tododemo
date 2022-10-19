@@ -2,9 +2,11 @@ package db
 
 import (
 	"context"
-	"github.com/google/go-cmp/cmp"
-	"github.com/nnaakkaaii/tododemo/internal/todo"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
+
+	"github.com/nnaakkaaii/tododemo/internal/todo"
 )
 
 func TestMemoryDB_PutTODO(t *testing.T) {

@@ -3,8 +3,9 @@ package http
 import (
 	"context"
 	"fmt"
-	"github.com/nnaakkaaii/tododemo/internal/db"
 	"net/http"
+
+	"github.com/nnaakkaaii/tododemo/internal/db"
 )
 
 type Server struct {

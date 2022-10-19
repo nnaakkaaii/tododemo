@@ -2,10 +2,12 @@ package http
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/google/uuid"
+
 	"github.com/nnaakkaaii/tododemo/internal/db"
 	"github.com/nnaakkaaii/tododemo/internal/todo"
-	"net/http"
 )
 
 var _ http.Handler = (*createHandler)(nil)

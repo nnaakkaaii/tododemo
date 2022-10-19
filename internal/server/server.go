@@ -2,11 +2,12 @@ package server
 
 import (
 	"context"
-	"github.com/nnaakkaaii/tododemo/internal/db"
-	"github.com/nnaakkaaii/tododemo/internal/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/nnaakkaaii/tododemo/internal/db"
+	"github.com/nnaakkaaii/tododemo/internal/http"
 )
 
 func Run() {
