@@ -1,11 +1,11 @@
-package http
+package server
 
 import (
 	"context"
 	"fmt"
-	"net/http"
-
 	"github.com/nnaakkaaii/tododemo/internal/db"
+	"github.com/nnaakkaaii/tododemo/internal/handler"
+	"net/http"
 )
 
 type Server struct {
@@ -14,8 +14,7 @@ type Server struct {
 
 func NewServer(port int, d db.DB) *Server {
 	mux := http.NewServeMux()
-	mux.Handle("/create", &createHandler{db: d})
-	mux.Handle("/list", &listHandler{db: d})
+	mux.Handle("/todos", handler.NewTODOsHandler(d))
 	return &Server{
 		server: &http.Server{
 			Addr:    fmt.Sprintf(":%d", port),
@@ -26,14 +25,14 @@ func NewServer(port int, d db.DB) *Server {
 
 func (s *Server) Start() error {
 	if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		return fmt.Errorf("failed to server: %w", err)
+		return fmt.Errorf("failed to server: %v", err)
 	}
 	return nil
 }
 
 func (s *Server) Stop(ctx context.Context) error {
 	if err := s.server.Shutdown(ctx); err != nil {
-		return fmt.Errorf("failed to shutdown: %w", err)
+		return fmt.Errorf("failed to shutdown: %v", err)
 	}
 	return nil
 }

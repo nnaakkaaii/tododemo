@@ -2,37 +2,32 @@ package db
 
 import (
 	"context"
+	"github.com/nnaakkaaii/tododemo/internal/model"
 	"sync"
-
-	"github.com/nnaakkaaii/tododemo/internal/todo"
 )
 
-var _ DB = (*memoryDB)(nil)
-
 type memoryDB struct {
-	db   map[string]*todo.TODO
+	db   map[string]*model.TODO
 	lock sync.RWMutex
 }
 
 func NewMemoryDB() DB {
-	return &memoryDB{db: map[string]*todo.TODO{}}
+	return &memoryDB{db: map[string]*model.TODO{}}
 }
 
-func (m *memoryDB) GetAllTODOs(ctx context.Context) ([]*todo.TODO, error) {
+func (m *memoryDB) SelectAllTODOs(ctx context.Context) ([]*model.TODO, error) {
 	m.lock.RLock()
 	defer m.lock.RUnlock()
 
-	result := make([]*todo.TODO, len(m.db))
-	i := 0
+	result := make([]*model.TODO, 0, len(m.db))
 	for _, t := range m.db {
-		result[i] = t
-		i++
+		result = append(result, t)
 	}
 
 	return result, nil
 }
 
-func (m *memoryDB) PutTODO(ctx context.Context, t *todo.TODO) error {
+func (m *memoryDB) InsertTODO(ctx context.Context, t *model.TODO) error {
 	m.lock.Lock()
 	m.db[t.ID] = t
 	m.lock.Unlock()

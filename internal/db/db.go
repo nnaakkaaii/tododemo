@@ -2,11 +2,10 @@ package db
 
 import (
 	"context"
-
-	"github.com/nnaakkaaii/tododemo/internal/todo"
+	"github.com/nnaakkaaii/tododemo/internal/model"
 )
 
 type DB interface {
-	PutTODO(ctx context.Context, t *todo.TODO) error
-	GetAllTODOs(ctx context.Context) ([]*todo.TODO, error)
+	SelectAllTODOs(ctx context.Context) ([]*model.TODO, error)
+	InsertTODO(ctx context.Context, t *model.TODO) error
 }

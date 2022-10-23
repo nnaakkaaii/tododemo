@@ -2,43 +2,98 @@ package db
 
 import (
 	"context"
-	"testing"
-
 	"github.com/google/go-cmp/cmp"
-
-	"github.com/nnaakkaaii/tododemo/internal/todo"
+	"github.com/nnaakkaaii/tododemo/internal/model"
+	"testing"
 )
 
-func TestMemoryDB_PutTODO(t *testing.T) {
+func TestMemoryDB_SelectAllTODOs(t *testing.T) {
 	t.Parallel()
 
-	todo1 := &todo.TODO{
-		ID:    "43b9c5c8-bb77-416e-8f65-22a23d221d64",
-		Title: "brush the gopher",
+	todos := []*model.TODO{
+		{
+			ID:    "d3a6633e-0409-4fba-98be-de918e0fbbcc",
+			Title: "apply for kaggle",
+		},
 	}
-	tests := map[string]struct {
-		todo     *todo.TODO
-		expected map[string]*todo.TODO
+
+	tests := []struct {
+		name       string
+		db         map[string]*model.TODO
+		wantEntity []*model.TODO
+		wantErr    bool
 	}{
-		"put": {
-			todo:     todo1,
-			expected: map[string]*todo.TODO{todo1.ID: todo1},
+		{
+			name:       "successful case",
+			db:         map[string]*model.TODO{todos[0].ID: todos[0]},
+			wantEntity: todos,
+			wantErr:    false,
 		},
 	}
 
 	ctx := context.Background()
-	for name, test := range tests {
-		test := test
-		t.Run(name, func(t *testing.T) {
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
 
-			d := &memoryDB{db: map[string]*todo.TODO{}}
-			if err := d.PutTODO(ctx, test.todo); err != nil {
-				t.Fatalf("failed to put a todo: %s", err.Error())
-			}
+			d := &memoryDB{db: tc.db}
 
-			if diff := cmp.Diff(test.expected, d.db); diff != "" {
-				t.Errorf("\n(-expected, +actual)\n%s", diff)
+			entity, err := d.SelectAllTODOs(ctx)
+
+			if diff := cmp.Diff(tc.wantErr, err != nil); diff != "" {
+				t.Errorf(diff)
+			}
+			if diff := cmp.Diff(tc.wantEntity, entity); diff != "" {
+				t.Errorf(diff)
+			}
+		})
+	}
+}
+
+func TestMemoryDB_InsertTODO(t *testing.T) {
+	t.Parallel()
+
+	todos := []*model.TODO{
+		{
+			ID:    "3bfef2d7-3f3f-4f9a-81d9-28bb61f33ef0",
+			Title: "mail to the professor",
+		},
+	}
+
+	tests := []struct {
+		name    string
+		entity  *model.TODO
+		db      map[string]*model.TODO
+		wantDB  map[string]*model.TODO
+		wantErr bool
+	}{
+		{
+			name:    "successful case",
+			entity:  todos[0],
+			db:      map[string]*model.TODO{},
+			wantDB:  map[string]*model.TODO{todos[0].ID: todos[0]},
+			wantErr: false,
+		},
+	}
+
+	ctx := context.Background()
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			d := &memoryDB{db: tc.db}
+
+			err := d.InsertTODO(ctx, tc.entity)
+
+			if diff := cmp.Diff(tc.wantErr, err != nil); diff != "" {
+				t.Errorf(diff)
+			}
+			if diff := cmp.Diff(tc.wantDB, d.db); diff != "" {
+				t.Errorf(diff)
 			}
 		})
 	}
